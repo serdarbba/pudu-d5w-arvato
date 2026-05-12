@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pudu D5W — Soru & Cevap Referansı</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #1a1a2e; }
+
+  .header {
+    background: linear-gradient(135deg, #1b2a4a 0%, #243b6e 100%);
+    color: white;
+    padding: 48px 60px 40px;
+  }
+  .header h1 { font-size: 26px; font-weight: 700; }
+  .header .subtitle { font-size: 14px; color: #8aa4cc; margin-top: 8px; }
+  .header .meta { margin-top: 20px; display: flex; gap: 32px; font-size: 13px; color: #7a9cc0; }
+  .header .meta span strong { color: #c8daf0; }
+
+  .container { max-width: 900px; margin: 40px auto; padding: 0 24px 60px; }
+
+  .category {
+    margin-bottom: 32px;
+  }
+  .category-title {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #4a6fa5;
+    margin-bottom: 12px;
+    padding-left: 4px;
+    border-left: 3px solid #4a6fa5;
+    padding-left: 10px;
+  }
+
+  .qa-item {
+    background: white;
+    border-radius: 10px;
+    margin-bottom: 10px;
+    box-shadow: 0 1px 8px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+
+  .question {
+    padding: 16px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1a1a2e;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+  }
+  .question .q-icon {
+    background: #e8f0fe;
+    color: #4a6fa5;
+    font-size: 12px;
+    font-weight: 800;
+    width: 24px; height: 24px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+
+  .answer {
+    padding: 0 20px 16px 56px;
+    font-size: 14px;
+    line-height: 1.7;
+    color: #4a5568;
+    border-top: 1px solid #f0f2f7;
+    padding-top: 12px;
+  }
+
+  .answer .yes { color: #2e7d32; font-weight: 700; }
+  .answer .no  { color: #c62828; font-weight: 700; }
+  .answer .note {
+    margin-top: 8px;
+    background: #fffbea;
+    border-left: 3px solid #f6c90e;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #7a6200;
+    border-radius: 0 4px 4px 0;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: #9aa3b5;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Pudu D5W — Soru &amp; Cevap Referansı</h1>
+  <div class="subtitle">Sunum sırasında gelebilecek sorulara hazırlık için iç referans doküman</div>
+  <div class="meta">
+    <span><strong>Kaynak:</strong> PUDU D5W SDK v1.0 &amp; Q&amp;A Teknik Dokümanı</span>
+    <span><strong>Tarih:</strong> Mayıs 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Navigasyon -->
+  <div class="category">
+    <div class="category-title">Navigasyon ve Kontrol</div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Robota haritadan nokta göstererek "şuraya git" diyebilir miyiz?</div>
+      <div class="answer"><span class="yes">Evet.</span> SDK'da <code>TARGET_POINT</code> komutu var. X, Y, Z koordinatı ve yön açısı (yaw) metre/radyan cinsinden gönderilir. Robot SLAM haritası üzerinde otonom olarak o noktaya gider.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Robotu yarı yolda durdurup tekrar devam ettirebilir miyiz?</div>
+      <div class="answer"><span class="yes">Evet.</span> <code>PAUSE</code>, <code>RESUME</code>, <code>STOP</code> komutlarının hepsi SDK 2.6'da mevcut ve kod örnekleriyle doğrulandı.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Navigasyon sırasında robot nerede olduğunu haritada görebilir miyiz?</div>
+      <div class="answer">
+        <span class="no">Hayır.</span> SDK v1.0'da robotun anlık X/Y koordinatını döndüren bir subscriber bulunmuyor. Ne zaman hedefe vardığını (FINISHED), durduğunu (IDLE) veya hata olduğunu (PLAN_ERROR) anlık olarak görebiliyoruz.
+        <div class="note">Bu bir SDK kısıtı. PUDU'ya iletilmesi gereken bir geri bildirim.</div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Joystick ile manuel kontrol edilebilir mi?</div>
+      <div class="answer"><span class="yes">Evet.</span> 30 Hz frekansta ileri/geri/sağ/sol/dönüş hız komutları gönderilebilir. Komut gelmeyi keserse robot otomatik duruyor.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Robot otomatik devriye rotasını programatik olarak oluşturabilir miyiz?</div>
+      <div class="answer">
+        <span class="no">Hayır.</span> Devriye rotaları şu an sadece PUDU'nun kendi platformu üzerinden oluşturulabiliyor.
+        <div class="note">PUDU bu API'yi Q2 2026'ya planlamış ancak garanti değil. Teklife dahil etmiyoruz.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Kamera -->
+  <div class="category">
+    <div class="category-title">Kameralar ve Video</div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Kaç kamera var ve hepsini aynı anda görebilir miyiz?</div>
+      <div class="answer"><span class="yes">Evet.</span> 6 kamera var: ön, arka, sol, sağ, surround ve gimbal. SDK eşzamanlı stream'i destekliyor, Q&amp;A'da da onaylandı.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Video akışı nasıl çalışıyor, özel bir altyapı gerekiyor mu?</div>
+      <div class="answer"><span class="yes">Gerekmez.</span> Standart RTSP protokolü. Mevcut herhangi bir NVR veya video platformuna bağlanabilir.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Görüntü kalitesini ve çözünürlüğü ayarlayabilir miyiz?</div>
+      <div class="answer"><span class="yes">Evet.</span> Kalite (ham/yüksek/orta/düşük), çözünürlük, frame rate ve bitrate hepsi SDK üzerinden programatik olarak ayarlanabiliyor.</div>
+    </div>
+  </div>
+
+  <!-- AI -->
+  <div class="category">
+    <div class="category-title">Yapay Zeka</div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>AI analizi robotun üzerinde mi çalışıyor?</div>
+      <div class="answer">
+        <span class="no">Hayır.</span> PUDU'nun AI Computing Box'ı kapalı sistem, üzerine kendi modelimizi yükleyemiyoruz. Robot video akışını BBA'nın kendi sunucusuna çekiyoruz, AI burada çalışıyor. Q&amp;A'da da bu yöntem onaylandı.
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Hangi AI tespitlerini yapabiliyoruz?</div>
+      <div class="answer">Müşteri ihtiyacına göre şekillenir. Hazır örnekler: baret/yelek eksikliği, duman/yangın, yerde yatan kişi, alan ihlali. Özel model geliştirmek de mümkün.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>AI tespiti gerçek zamanlı mı?</div>
+      <div class="answer"><span class="yes">Evet.</span> Video stream anlık geliyor, tespit anında operatöre bildirim gönderilebilir.</div>
+    </div>
+  </div>
+
+  <!-- Entegrasyon -->
+  <div class="category">
+    <div class="category-title">Mevcut Altyapıyla Entegrasyon</div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Tesisteki mevcut CCTV kameralarla entegrasyon olabilir mi?</div>
+      <div class="answer"><span class="yes">Evet.</span> PUDU üzerinden değil, BBA'nın NEXUS platformu üzerinden. RTSP destekleyen herhangi bir marka kamera dahil edilebilir. PUDU kendi platformunda sadece Dahua ile entegrasyon yapabiliyor.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Sistem internete ihtiyaç duyuyor mu?</div>
+      <div class="answer"><span class="no">Hayır.</span> Tamamen lokal ağda çalışıyor. Q&amp;A'da air-gapped kurulum "Supported" olarak onaylandı.</div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Başka sistemlere (ERP, WMS) bağlanabilir mi?</div>
+      <div class="answer">SDK'nın dışına çıkıyor ama BBA platformu üzerinden REST API veya webhook ile entegrasyon geliştirilebilir. Proje kapsamına göre ayrıca değerlendirilmeli.</div>
+    </div>
+  </div>
+
+  <!-- Teknik Kısıtlar -->
+  <div class="category">
+    <div class="category-title">Teknik Kısıtlar ve Riskler</div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Batarya durumunu ve motor sıcaklığını takip edebilir miyiz?</div>
+      <div class="answer">
+        <span class="no">Şu an hayır.</span> SDK v1.0'da bu veriler için subscriber bulunmuyor.
+        <div class="note">PUDU'ya iletilecek açık bir soru olarak kayıtlı. Taahhüt veremeyiz.</div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>Büyük bir alanda SLAM doğru çalışır mı?</div>
+      <div class="answer">
+        PUDU 1 milyon m² alanı desteklediğini söylüyor ancak büyük tesislerde lokalizasyon kayması riski var.
+        <div class="note">Sahada test gerektirir. Teklife bu başlıkla bir garanti koymuyoruz.</div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>SDK yeni çıkmış, stabil mi?</div>
+      <div class="answer">
+        v1.0, 17 Mart 2026 tarihli. Çok yeni bir SDK.
+        <div class="note">PUDU ile versiyon garantisi ve destek SLA'sı konuşulmalı.</div>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <div class="question"><span class="q-icon">S</span>WiFi kesilirse ne olur?</div>
+      <div class="answer">
+        4G modülü var ancak WiFi → 4G geçişi Android'in kendi mantığına bırakılmış, optimize edilmemiş.
+        <div class="note">Tesis WiFi altyapısı güçlü olmalı. 4G'ye güvenilir failover garanti edilemez.</div>
+      </div>
+    </div>
+  </div>
+
+  <footer>BBA Teknoloji &nbsp;|&nbsp; İç Referans &nbsp;|&nbsp; Mayıs 2026</footer>
+
+</div>
+</body>
+</html>

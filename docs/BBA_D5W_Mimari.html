@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pudu D5W — Sistem Mimarisi</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: #eef1f7;
+    min-height: 100vh;
+    display: flex; flex-direction: column; align-items: center;
+    padding: 48px 24px;
+  }
+
+  .title-block { text-align: center; margin-bottom: 40px; }
+  .title-block h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; }
+  .title-block p  { font-size: 13px; color: #7a8899; margin-top: 6px; }
+
+  /* ── ANA KART ── */
+  .card {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 8px 40px rgba(0,0,0,0.10);
+    padding: 48px 52px;
+    width: 100%; max-width: 960px;
+  }
+
+  /* ── 3 SÜTUN DÜZENİ ── */
+  .arch {
+    display: flex;
+    align-items: center;
+    gap: 0;
+  }
+
+  /* ── BLOK ── */
+  .block {
+    flex: 1;
+    border-radius: 16px;
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .block-title {
+    font-size: 10px; font-weight: 800; text-transform: uppercase;
+    letter-spacing: 1.2px; margin-bottom: 6px; text-align: center;
+  }
+
+  .block-robot  { background: #EBF1FF; border: 2px solid #4a6fa5; }
+  .block-robot .block-title { color: #2a4a8a; }
+
+  .block-server { background: #FFF8EC; border: 2px solid #f0a500; }
+  .block-server .block-title { color: #8a5200; }
+
+  .block-ops    { background: #EDFAF0; border: 2px solid #3aaa5c; }
+  .block-ops .block-title { color: #1a6632; }
+
+  /* ── İÇ SATIR ── */
+  .row {
+    border-radius: 10px;
+    padding: 10px 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .row-icon { font-size: 20px; flex-shrink: 0; }
+  .row-text {}
+  .row-name { font-size: 13px; font-weight: 700; color: #1a1a2e; line-height: 1.3; }
+  .row-sub  { font-size: 11px; color: #8a9aaa; margin-top: 1px; line-height: 1.4; }
+
+  .row-blue   { background: #dce8fb; }
+  .row-yellow { background: #fff3d0; }
+  .row-green  { background: #d5f5e0; }
+  .row-gray   { background: #f0f2f7; }
+
+  /* ── BAĞLANTI OKU ── */
+  .connector {
+    display: flex; flex-direction: column;
+    align-items: center; gap: 6px;
+    padding: 0 14px; flex-shrink: 0; width: 110px;
+  }
+  .conn-line {
+    width: 100%; height: 2px;
+    background: linear-gradient(90deg, #4a6fa5, #9ab0d0);
+    position: relative;
+  }
+  .conn-line::after {
+    content: '▶';
+    position: absolute; right: -6px; top: -8px;
+    color: #4a6fa5; font-size: 12px;
+  }
+  .conn-line.both::before {
+    content: '◀';
+    position: absolute; left: -6px; top: -8px;
+    color: #4a6fa5; font-size: 12px;
+  }
+  .conn-badge {
+    background: #1a1a2e; color: white;
+    font-size: 10px; font-weight: 700;
+    padding: 3px 10px; border-radius: 20px;
+    white-space: nowrap;
+  }
+  .conn-sub {
+    font-size: 10px; color: #8a9aaa; text-align: center;
+    line-height: 1.4;
+  }
+
+  /* ── AĞ BANDI ── */
+  .net-band {
+    margin-top: 32px;
+    background: #f8f9fc;
+    border: 2px dashed #c5cfe0;
+    border-radius: 14px;
+    padding: 16px 24px;
+    display: flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  }
+  .net-band-icon { font-size: 24px; }
+  .net-band-title { font-size: 12px; font-weight: 700; color: #4a5568; }
+  .net-band-desc  { font-size: 12px; color: #718096; margin-top: 2px; }
+  .net-pills { display: flex; gap: 10px; flex-wrap: wrap; margin-left: auto; }
+  .pill {
+    padding: 5px 14px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; border: 1.5px solid;
+  }
+  .pill-green  { background:#e8f8ed; border-color:#3aaa5c; color:#1a6632; }
+  .pill-red    { background:#fdecea; border-color:#e57373; color:#b71c1c; }
+
+  /* ── KİLİT NOTU ── */
+  .lock-note {
+    margin-top: 16px;
+    background: #FFF8EC; border: 1.5px solid #f0c060;
+    border-radius: 10px; padding: 12px 18px;
+    font-size: 12px; color: #7a5200;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .lock-note strong { color: #5a3800; }
+
+  /* ── ALT PROTOKOL TABLOSU ── */
+  .proto-table {
+    margin-top: 32px;
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  }
+  .proto-table th {
+    background: #f8f9fc; padding: 10px 18px;
+    font-size: 11px; font-weight: 700; color: #6b7a99;
+    text-transform: uppercase; letter-spacing: 0.6px;
+    text-align: left; border-bottom: 2px solid #eef0f5;
+  }
+  .proto-table td {
+    padding: 10px 18px; font-size: 13px;
+    border-bottom: 1px solid #f0f2f7; vertical-align: middle;
+  }
+  .proto-table tr:last-child td { border-bottom: none; }
+  .proto-table td:first-child { font-weight: 600; color: #1a1a2e; }
+  .proto-table td:nth-child(2) { color: #4a5568; }
+  .badge {
+    display: inline-block; padding: 2px 9px; border-radius: 20px;
+    font-size: 10px; font-weight: 800; letter-spacing: 0.4px;
+  }
+  .b-dds  { background:#ede7f6; color:#4a148c; }
+  .b-rtsp { background:#e3f2fd; color:#0d47a1; }
+  .b-ws   { background:#e8f5e9; color:#1b5e20; }
+  .dir { font-size: 14px; color: #9ab0d0; }
+
+  @media print {
+    body { background: white; padding: 20px; }
+    .card { box-shadow: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="title-block">
+  <h1>Pudu D5W — Sistem Mimarisi</h1>
+  <p>BBA Teknoloji &nbsp;·&nbsp; Zara Arvato Projesi &nbsp;·&nbsp; Mayıs 2026</p>
+</div>
+
+<div class="card">
+
+  <!-- ══════════ ANA DİYAGRAM ══════════ -->
+  <div class="arch">
+
+    <!-- ROBOT -->
+    <div class="block block-robot">
+      <div class="block-title">Robot (Saha)</div>
+
+      <div class="row row-blue">
+        <span class="row-icon">🤖</span>
+        <div class="row-text">
+          <div class="row-name">Pudu D5W</div>
+          <div class="row-sub">Android OS · CycloneDDS</div>
+        </div>
+      </div>
+
+      <div class="row row-blue">
+        <span class="row-icon">📷</span>
+        <div class="row-text">
+          <div class="row-name">6 Kamera</div>
+          <div class="row-sub">RTSP video akışı</div>
+        </div>
+      </div>
+
+      <div class="row row-blue">
+        <span class="row-icon">📡</span>
+        <div class="row-text">
+          <div class="row-name">Sensörler</div>
+          <div class="row-sub">IMU · LiDAR · Lokalizasyon</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OK 1 -->
+    <div class="connector">
+      <div class="conn-badge">WiFi · LAN</div>
+      <div class="conn-line both"></div>
+      <div class="conn-sub">CycloneDDS<br>RTSP</div>
+    </div>
+
+    <!-- SUNUCU -->
+    <div class="block block-server">
+      <div class="block-title">BBA Sunucu PC — Arvato Tesisi</div>
+
+      <div class="row row-yellow">
+        <span class="row-icon">⚙️</span>
+        <div class="row-text">
+          <div class="row-name">C++ SDK Bridge</div>
+          <div class="row-sub">Komut gönderir · Telemetri alır</div>
+        </div>
+      </div>
+
+      <div class="row row-yellow">
+        <span class="row-icon">🧠</span>
+        <div class="row-text">
+          <div class="row-name">AI Analiz Motoru</div>
+          <div class="row-sub">Video akışı → Model çıkarımı</div>
+        </div>
+      </div>
+
+      <div class="row row-yellow">
+        <span class="row-icon">🗄️</span>
+        <div class="row-text">
+          <div class="row-name">BBA NEXUS</div>
+          <div class="row-sub">Video · Alarm · Raporlama</div>
+        </div>
+      </div>
+
+      <div class="row row-gray">
+        <span class="row-icon">📹</span>
+        <div class="row-text">
+          <div class="row-name">Mevcut CCTV</div>
+          <div class="row-sub">RTSP · Herhangi bir marka</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- OK 2 -->
+    <div class="connector">
+      <div class="conn-badge">LAN</div>
+      <div class="conn-line both"></div>
+      <div class="conn-sub">WebSocket<br>HTTPS</div>
+    </div>
+
+    <!-- OPERATÖR -->
+    <div class="block block-ops">
+      <div class="block-title">Operatör</div>
+
+      <div class="row row-green">
+        <span class="row-icon">🖥️</span>
+        <div class="row-text">
+          <div class="row-name">NEXUS Arayüzü</div>
+          <div class="row-sub">Tarayıcı · Kontrol & İzleme</div>
+        </div>
+      </div>
+
+      <div class="row row-green">
+        <span class="row-icon">📱</span>
+        <div class="row-text">
+          <div class="row-name">Mobil Uygulama</div>
+          <div class="row-sub">Bildirim · Canlı izleme</div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /arch -->
+
+  <!-- AĞ BANDI -->
+  <div class="net-band">
+    <span class="net-band-icon">🌐</span>
+    <div>
+      <div class="net-band-title">Robot ↔ Sunucu iletişimi tamamen yerel ağda</div>
+      <div class="net-band-desc">Robot · Sunucu · Operatör → aynı iç ağda · PUDU bulutu kullanılmaz</div>
+    </div>
+    <div class="net-pills">
+      <span class="pill pill-red">PUDU bulutu kullanılmaz</span>
+    </div>
+  </div>
+
+  <!-- AI SEÇENEKLERİ -->
+  <div style="margin-top:20px; display:flex; gap:16px;">
+
+    <div style="flex:1; background:#e8f5e9; border:2px solid #43a047; border-radius:14px; padding:18px 20px;">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#1b5e20;margin-bottom:10px;">
+        Seçenek A — Lokal AI
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:22px;">🖥️</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1a1a2e;">Vision Tabanlı Lokal Model</div>
+          <div style="font-size:11px;color:#4a7a5a;">BBA sunucusunda çalışır · İnternet gerekmez</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#2e7d32;background:#c8e6c9;border-radius:8px;padding:8px 12px;line-height:1.6;">
+        ✓ Tamamen lokal · Air-gapped<br>
+        ✓ Görüntü dışarı çıkmaz<br>
+        ✓ Düşük gecikme<br>
+        — Sınırlı model kapasitesi
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;color:#9ab0d0;font-size:22px;font-weight:300;">veya</div>
+
+    <div style="flex:1; background:#fff8e1; border:2px solid #f9a825; border-radius:14px; padding:18px 20px;">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#7a5000;margin-bottom:10px;">
+        Seçenek B — Gemini API
+      </div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+        <span style="font-size:22px;">☁️</span>
+        <div>
+          <div style="font-size:13px;font-weight:700;color:#1a1a2e;">Google Gemini Vision API</div>
+          <div style="font-size:11px;color:#7a6a3a;">BBA sunucusu → İnternet → Google API</div>
+        </div>
+      </div>
+      <div style="font-size:12px;color:#7a5200;background:#ffe082;border-radius:8px;padding:8px 12px;line-height:1.6;">
+        ✓ Güçlü model · Geniş tespit kapasitesi<br>
+        ✓ Model güncellemesi otomatik<br>
+        — İnternet bağlantısı gerekli<br>
+        — Görüntüler Google'a gidiyor
+      </div>
+    </div>
+
+  </div>
+
+  <!-- NOT -->
+  <div class="lock-note" style="margin-top:20px;">
+    <span style="font-size:20px;">⚠️</span>
+    <div>
+      <strong>Kritik:</strong> Robot ile Sunucu PC aynı WiFi ağ segmentinde olmalı.
+      CycloneDDS protokolü internet veya VPN üzerinden çalışmaz — doğrudan lokal ağ bağlantısı zorunlu.
+    </div>
+  </div>
+
+  <!-- PROTOKOL TABLOSU -->
+  <table class="proto-table" style="margin-top:32px;">
+    <thead>
+      <tr>
+        <th>Ne taşınıyor</th>
+        <th>Protokol</th>
+        <th>Yön</th>
+        <th>Açıklama</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Komutlar</td>
+        <td><span class="badge b-dds">CycloneDDS</span></td>
+        <td class="dir">Sunucu → Robot</td>
+        <td>Git, dur, duraklat, joystick hız, acil durdurma</td>
+      </tr>
+      <tr>
+        <td>Telemetri</td>
+        <td><span class="badge b-dds">CycloneDDS</span></td>
+        <td class="dir">Robot → Sunucu</td>
+        <td>Navigasyon durumu, IMU, LiDAR, lokalizasyon</td>
+      </tr>
+      <tr>
+        <td>Video Akışı</td>
+        <td><span class="badge b-rtsp">RTSP</span></td>
+        <td class="dir">Robot → Sunucu</td>
+        <td>6 kamera eşzamanlı; AI motoru ve NEXUS çeker</td>
+      </tr>
+      <tr>
+        <td>Kontrol & Görüntü</td>
+        <td><span class="badge b-ws">WebSocket</span></td>
+        <td class="dir">Sunucu ↔ Operatör</td>
+        <td>Canlı video, alarm, robot durumu, kullanıcı komutları</td>
+      </tr>
+    </tbody>
+  </table>
+
+</div><!-- /card -->
+
+</body>
+</html>

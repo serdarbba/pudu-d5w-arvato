@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pudu D5W — BBA Yazılım Entegrasyon Kapsamı</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #1a1a2e; }
+
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: white;
+    padding: 48px 60px 40px;
+  }
+  .header h1 { font-size: 28px; font-weight: 700; letter-spacing: 0.5px; }
+  .header .subtitle { font-size: 16px; color: #a0b4d0; margin-top: 8px; }
+  .header .meta { margin-top: 20px; display: flex; gap: 32px; font-size: 13px; color: #7a9cc0; }
+  .header .meta span strong { color: #c8daf0; }
+
+  .container { max-width: 960px; margin: 40px auto; padding: 0 24px 60px; }
+
+  .section {
+    background: white;
+    border-radius: 12px;
+    margin-bottom: 24px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    overflow: hidden;
+  }
+  .section-header {
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border-bottom: 1px solid #eef0f5;
+  }
+  .section-header .num {
+    background: #0f3460;
+    color: white;
+    width: 32px; height: 32px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700; flex-shrink: 0;
+  }
+  .section-header h2 { font-size: 17px; font-weight: 600; color: #1a1a2e; }
+  .section-header .badge {
+    margin-left: auto;
+    background: #e8f5e9;
+    color: #2e7d32;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: #f8f9fc; }
+  thead th {
+    text-align: left;
+    padding: 12px 28px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #6b7a99;
+    text-transform: uppercase;
+    letter-spacing: 0.6px;
+    border-bottom: 2px solid #eef0f5;
+  }
+  tbody tr { border-bottom: 1px solid #f0f2f7; transition: background 0.15s; }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: #fafbff; }
+  tbody td { padding: 13px 28px; font-size: 14px; line-height: 1.5; }
+  tbody td:first-child { font-weight: 600; color: #1a1a2e; width: 240px; }
+  tbody td:last-child { color: #4a5568; }
+
+  .out-of-scope .section-header .num { background: #c62828; }
+  .out-of-scope thead th { color: #9e3737; }
+  .out-of-scope .badge { background: #fdecea; color: #c62828; }
+
+  .ai-note {
+    padding: 12px 28px 20px;
+    font-size: 13px;
+    color: #5a6a8a;
+    background: #f8f9fc;
+    border-top: 1px solid #eef0f5;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 12px;
+    color: #9aa3b5;
+    margin-top: 40px;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Pudu D5W — BBA Yazılım Entegrasyon Kapsamı</h1>
+  <div class="subtitle">Zara Arvato için geliştirilen ekstra yazılım katmanı</div>
+  <div class="meta">
+    <span><strong>Hazırlayan:</strong> BBA Teknoloji</span>
+    <span><strong>Kaynak:</strong> PUDU D5W SDK v1.0 &amp; Q&amp;A Teknik Dokümanı</span>
+    <span><strong>Tarih:</strong> Mayıs 2026</span>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- 1. Navigasyon -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">1</div>
+      <h2>Robot Navigasyon Kontrolü</h2>
+      <span class="badge">SDK 2.6 Doğrulandı</span>
+    </div>
+    <table>
+      <thead><tr><th>Özellik</th><th>Açıklama</th></tr></thead>
+      <tbody>
+        <tr><td>Hedef Nokta Gönderme</td><td>Harita üzerinde X, Y, Z koordinatı ve yön açısı (yaw) belirtilerek robot ilgili noktaya yönlendirilir</td></tr>
+        <tr><td>Navigasyon Durdurma</td><td>Aktif navigasyon anında sonlandırılır</td></tr>
+        <tr><td>Navigasyon Duraklatma</td><td>Navigasyon geçici olarak askıya alınır; robot yerinde bekler</td></tr>
+        <tr><td>Navigasyon Devam Ettirme</td><td>Duraklatılmış navigasyon kaldığı yerden sürdürülür</td></tr>
+        <tr><td>Yeniden Konumlandırma</td><td>Robot SLAM haritasında kendini yeniden lokalize eder</td></tr>
+        <tr><td>Navigasyon Durum Takibi</td><td>Anlık durum: Bekleniyor / Hareket Ediyor / Duraklatıldı / Tamamlandı / Planlama Hatası</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 2. Hareket -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">2</div>
+      <h2>Robot Hareket Kontrolü</h2>
+      <span class="badge">SDK 2.5 Doğrulandı</span>
+    </div>
+    <table>
+      <thead><tr><th>Özellik</th><th>Açıklama</th></tr></thead>
+      <tbody>
+        <tr><td>Joystick Kontrolü</td><td>İleri, geri, sağ, sol ve dönüş; 30 Hz frekansta gerçek zamanlı hız kontrolü</td></tr>
+        <tr><td>Ayağa Kalkma</td><td>Robota ayağa kalkması ve pozisyonu kilitlemesi komutu</td></tr>
+        <tr><td>Yatma</td><td>Robota yatması ve pozisyonu kilitlemesi komutu</td></tr>
+        <tr><td>Acil Durdurma</td><td>Motor gücü anında kesilir; tüm hareket durur</td></tr>
+        <tr><td>Yük Modu</td><td>Üzerinde yük varken optimize edilmiş hareket modu etkinleştirilebilir</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 3. Sensör -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">3</div>
+      <h2>Sensör Verisi İzleme</h2>
+      <span class="badge">SDK 2.2 / 2.3 / 2.4 Doğrulandı</span>
+    </div>
+    <table>
+      <thead><tr><th>Sensör</th><th>Alınan Veri</th></tr></thead>
+      <tbody>
+        <tr><td>IMU</td><td>Dönüş (quaternion), açısal hız (jiroskop), ivme (ivmeölçer); nanosaniye zaman damgasıyla</td></tr>
+        <tr><td>LiDAR Ön</td><td>3D nokta bulutu — ham veri</td></tr>
+        <tr><td>LiDAR Arka</td><td>3D nokta bulutu — ham veri</td></tr>
+        <tr><td>LiDAR Düzeltilmiş</td><td>Distorsiyon giderilmiş birleşik nokta bulutu</td></tr>
+        <tr><td>Lokalizasyon Durumu</td><td>Normal / Uyarı / Hata; alt detay: lazer kaybı, odometri kayması, harita hatası</td></tr>
+        <tr><td>Navigasyon Durumu</td><td>Görev kimliği ve anlık navigasyon fazı</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 4. Kamera -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">4</div>
+      <h2>Kamera ve Video</h2>
+      <span class="badge">SDK 2.1 Doğrulandı</span>
+    </div>
+    <table>
+      <thead><tr><th>Özellik</th><th>Açıklama</th></tr></thead>
+      <tbody>
+        <tr><td>6 Kamera Eşzamanlı</td><td>Ön, arka, sol, sağ, surround ve gimbal kameralar aynı anda aktarılabilir</td></tr>
+        <tr><td>RTSP Protokolü</td><td>Standart RTSP ile video akışı; mevcut NVR veya video platformuna entegrasyon mümkün</td></tr>
+        <tr><td>Kamera Seçimi</td><td>Yazılım üzerinden aktif kamera değiştirilebilir</td></tr>
+        <tr><td>Görüntü Kalitesi Ayarı</td><td>Ham / Yüksek / Orta / Düşük kalite seçimi</td></tr>
+        <tr><td>Çözünürlük Ayarı</td><td>Programatik olarak çözünürlük değiştirme</td></tr>
+        <tr><td>Frame Rate Ayarı</td><td>Saniyedeki kare sayısı ayarı</td></tr>
+        <tr><td>Bitrate Ayarı</td><td>Bant genişliği optimizasyonu için bitrate kontrolü</td></tr>
+        <tr><td>Anlık Görüntü</td><td>İstenen anda ekran görüntüsü alma</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 5. AI -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">5</div>
+      <h2>Yapay Zeka Analizi</h2>
+      <span class="badge">BBA Sunucusunda</span>
+    </div>
+    <table>
+      <thead><tr><th>Tespit Kategorisi</th><th>Örnek Kullanım</th></tr></thead>
+      <tbody>
+        <tr><td>Kişisel Koruyucu Ekipman</td><td>Baret, yelek, gözlük eksikliği tespiti</td></tr>
+        <tr><td>Yangın ve Duman</td><td>Erken uyarı, anlık operatör bildirimi</td></tr>
+        <tr><td>Yerde Yatan Kişi</td><td>İş kazası veya bayılma tespiti</td></tr>
+        <tr><td>İzinsiz Alan İhlali</td><td>Yasaklı bölgelere girişin tespiti</td></tr>
+      </tbody>
+    </table>
+    <div class="ai-note">Robot kamera görüntüsü BBA'nın kendi sunucusuna aktarılır; AI modelleri burada çalışır. Modeller müşteri ihtiyacına göre özelleştirilebilir.</div>
+  </div>
+
+  <!-- 6. Altyapı -->
+  <div class="section">
+    <div class="section-header">
+      <div class="num">6</div>
+      <h2>Sistem Altyapısı</h2>
+      <span class="badge">Q&amp;A 6.2 / 6.9 Doğrulandı</span>
+    </div>
+    <table>
+      <thead><tr><th>Özellik</th><th>Açıklama</th></tr></thead>
+      <tbody>
+        <tr><td>Lokal Ağ Çalışması</td><td>Sistem tamamen yerel ağda çalışır; PUDU bulut bağlantısı gerekmez</td></tr>
+        <tr><td>Internet Bağımsız</td><td>Sahaya özel kapalı ağ (air-gapped) kurulumları desteklenir</td></tr>
+        <tr><td>CCTV Entegrasyonu</td><td>Mevcut sabit kamera altyapısı RTSP üzerinden sisteme dahil edilir; marka bağımsız</td></tr>
+        <tr><td>Tekil Platform</td><td>Robot, kamera ve AI verileri tek bir izleme platformunda birleştirilir</td></tr>
+        <tr><td>Gerçek Zamanlı Bildirim</td><td>Tespit edilen anomaliler operatöre anlık olarak iletilir</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Kapsam Dışı -->
+  <div class="section out-of-scope">
+    <div class="section-header">
+      <div class="num">—</div>
+      <h2>Kapsam Dışı</h2>
+      <span class="badge">Bu projede teslim edilmez</span>
+    </div>
+    <table>
+      <thead><tr><th>Konu</th><th>Neden</th></tr></thead>
+      <tbody>
+        <tr><td>Harita üzerinde anlık konum izleme</td><td>SDK v1.0'da robot konum subscriber'ı mevcut değil</td></tr>
+        <tr><td>Otomatik devriye rotası oluşturma</td><td>PUDU bu API'yi henüz sunmuyor — Q2 2026 planı, garanti değil</td></tr>
+        <tr><td>PUDU AI Box'a özel model yükleme</td><td>PUDU tarafından kapalı sistem olarak tanımlanmış</td></tr>
+        <tr><td>Batarya ve motor sıcaklığı takibi</td><td>SDK v1.0'da bu veri subscriber'ı bulunmuyor</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <footer>BBA Teknoloji &nbsp;|&nbsp; PUDU D5W SDK v1.0 &nbsp;|&nbsp; Mayıs 2026</footer>
+
+</div>
+</body>
+</html>

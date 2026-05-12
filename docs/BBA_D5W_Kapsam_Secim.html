@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pudu D5W — Kapsam Seçim Formu</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #1a1a2e; }
+
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: white;
+    padding: 48px 60px 40px;
+  }
+  .header h1 { font-size: 26px; font-weight: 700; }
+  .header .subtitle { font-size: 15px; color: #a0b4d0; margin-top: 8px; }
+  .header .meta { margin-top: 20px; display: flex; gap: 32px; font-size: 13px; color: #7a9cc0; flex-wrap: wrap; }
+  .header .meta span strong { color: #c8daf0; }
+
+  .toolbar {
+    background: white;
+    border-bottom: 1px solid #e2e6f0;
+    padding: 14px 60px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+    flex-wrap: wrap;
+  }
+  .toolbar .counter { font-size: 14px; color: #4a5568; margin-right: auto; }
+  .toolbar .counter strong { color: #0f3460; font-size: 17px; }
+  .btn {
+    padding: 8px 18px; border-radius: 8px; font-size: 13px;
+    font-weight: 600; cursor: pointer; border: none; transition: all 0.15s;
+  }
+  .btn-outline { background: white; border: 1.5px solid #c5cfe0; color: #4a5568; }
+  .btn-outline:hover { border-color: #4a6fa5; color: #4a6fa5; }
+  .btn-primary { background: #0f3460; color: white; }
+  .btn-primary:hover { background: #0a2545; }
+  .btn-print { background: #2e7d32; color: white; }
+  .btn-print:hover { background: #1b5e20; }
+
+  .container { max-width: 980px; margin: 32px auto; padding: 0 24px 80px; }
+
+  .category {
+    background: white; border-radius: 12px; margin-bottom: 20px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06); overflow: hidden;
+  }
+  .category-header {
+    padding: 15px 24px; display: flex; align-items: center; gap: 12px;
+    background: #f8f9fc; border-bottom: 1px solid #eef0f5;
+  }
+  .category-header .num {
+    color: white; width: 30px; height: 30px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700; flex-shrink: 0;
+  }
+  .category-header h2 { font-size: 15px; font-weight: 600; color: #1a1a2e; flex: 1; }
+  .category-header .cat-badge {
+    font-size: 11px; font-weight: 600; padding: 3px 10px;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .category-header .cat-sel-all {
+    font-size: 12px; color: #4a6fa5; cursor: pointer;
+    text-decoration: underline; user-select: none; white-space: nowrap;
+  }
+
+  .subgroup-label {
+    padding: 9px 24px 6px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.7px; color: #8a9bbf;
+    background: #fbfcfe; border-bottom: 1px solid #f3f4f9;
+  }
+
+  .item {
+    display: flex; align-items: flex-start; gap: 16px;
+    padding: 13px 24px; border-bottom: 1px solid #f0f2f7;
+    transition: background 0.12s;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: #fafbff; }
+  .item.selected { background: #f0faf1; }
+  .item.selected .item-title { color: #1b5e20; }
+
+  .toggle-wrap { flex-shrink: 0; padding-top: 2px; }
+  .toggle { position: relative; display: inline-block; width: 44px; height: 24px; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+    background: #d1d8e8; border-radius: 24px; transition: 0.2s;
+  }
+  .slider:before {
+    position: absolute; content: ""; height: 18px; width: 18px;
+    left: 3px; bottom: 3px; background: white; border-radius: 50%;
+    transition: 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+  }
+  input:checked + .slider { background: #2e7d32; }
+  input:checked + .slider:before { transform: translateX(20px); }
+
+  .item-body { flex: 1; }
+  .item-title { font-size: 14px; font-weight: 600; color: #1a1a2e; line-height: 1.4; }
+  .item-desc { font-size: 13px; color: #718096; margin-top: 3px; line-height: 1.5; }
+  .item-note {
+    margin-top: 6px;
+    background: #fffbea; border-left: 3px solid #f6c90e;
+    padding: 6px 10px; font-size: 12px; color: #7a6200;
+    border-radius: 0 4px 4px 0; line-height: 1.4;
+  }
+
+  .tag {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 2px 7px; border-radius: 4px; margin-left: 6px; vertical-align: middle;
+  }
+  .tag-note { background: #fff8e1; border: 1px solid #ffe082; color: #795500; }
+  .tag-custom { background: #e8eaf6; border: 1px solid #c5cae9; color: #3949ab; }
+  .tag-ready { background: #e8f5e9; border: 1px solid #a5d6a7; color: #2e7d32; }
+
+  .cat-note {
+    margin: 0 24px 14px;
+    background: #fffbea; border-left: 3px solid #f6c90e;
+    padding: 9px 14px; font-size: 12.5px; color: #7a6200;
+    border-radius: 0 6px 6px 0; line-height: 1.5;
+  }
+
+  /* Summary */
+  .summary-section {
+    background: white; border-radius: 12px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.09); margin-top: 32px; overflow: hidden;
+  }
+  .summary-header {
+    background: #0f3460; color: white; padding: 18px 28px;
+    font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 12px;
+  }
+  .summary-header .s-count {
+    background: rgba(255,255,255,0.2); padding: 3px 12px;
+    border-radius: 20px; font-size: 13px;
+  }
+  .summary-body { padding: 24px 28px; }
+  .summary-empty { color: #9aa3b5; font-size: 14px; font-style: italic; }
+  .summary-cat { margin-bottom: 20px; }
+  .summary-cat-title {
+    font-size: 11px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.8px; color: #4a6fa5; margin-bottom: 8px;
+    padding-bottom: 5px; border-bottom: 1px solid #eef0f5;
+  }
+  .summary-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 4px 0; font-size: 14px; color: #2d3748;
+  }
+  .summary-item:before {
+    content: ''; width: 7px; height: 7px;
+    background: #2e7d32; border-radius: 50%; flex-shrink: 0;
+  }
+
+  @media print {
+    .toolbar { display: none; }
+    .item:not(.selected) { display: none; }
+    .subgroup-label { display: none; }
+    .toggle-wrap { display: none; }
+    body { background: white; }
+    .category { box-shadow: none; border: 1px solid #ddd; page-break-inside: avoid; }
+    .summary-section { box-shadow: none; border: 1px solid #ddd; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Pudu D5W — Kapsam Seçim Formu</h1>
+  <div class="subtitle">İhtiyacınız olan özellikleri seçin — seçilen maddeler otomatik olarak aşağıda özetlenir</div>
+  <div class="meta">
+    <span><strong>Proje:</strong> Zara Arvato — PUDU D5W Entegrasyonu</span>
+    <span><strong>Hazırlayan:</strong> BBA Teknoloji</span>
+    <span><strong>Tarih:</strong> Mayıs 2026</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="counter">Seçilen: <strong id="sel-count">0</strong> özellik</div>
+  <button class="btn btn-outline" onclick="selectAll()">Tümünü Seç</button>
+  <button class="btn btn-outline" onclick="clearAll()">Temizle</button>
+  <button class="btn btn-print" onclick="window.print()">Yazdır / PDF</button>
+</div>
+
+<div class="container">
+
+  <!-- ═══════════════════════════════════════════
+       1. NAVİGASYON
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Robot Navigasyon Kontrolü">
+    <div class="category-header">
+      <div class="num" style="background:#0f3460">1</div>
+      <h2>Robot Navigasyon Kontrolü</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="item" data-title="Hedef Nokta Gönderme">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Hedef Nokta Gönderme</div>
+        <div class="item-desc">Harita üzerinde X, Y, Z koordinatı ve yön açısı belirtilerek robot ilgili noktaya yönlendirilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Navigasyon Durdurma / Duraklatma / Devam">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Navigasyon Durdurma / Duraklatma / Devam</div>
+        <div class="item-desc">Aktif navigasyon anında durdurulur, geçici askıya alınır veya kaldığı yerden sürdürülür</div>
+      </div>
+    </div>
+    <div class="item" data-title="Yeniden Konumlandırma">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Yeniden Konumlandırma</div>
+        <div class="item-desc">Robot SLAM haritasında kendini yeniden lokalize eder</div>
+      </div>
+    </div>
+    <div class="item" data-title="Navigasyon Durum Takibi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Navigasyon Durum Takibi</div>
+        <div class="item-desc">Anlık durum izleme: Bekleniyor / Hareket Ediyor / Duraklatıldı / Tamamlandı / Planlama Hatası</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       2. HAREKET
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Robot Hareket Kontrolü">
+    <div class="category-header">
+      <div class="num" style="background:#0f3460">2</div>
+      <h2>Robot Hareket Kontrolü</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+    <div class="item" data-title="Joystick / Uzaktan Manuel Kontrol">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Joystick / Uzaktan Manuel Kontrol</div>
+        <div class="item-desc">İleri, geri, sağ, sol ve dönüş; 30 Hz frekansta gerçek zamanlı hız kontrolü. Komut kesilirse robot otomatik durur.</div>
+      </div>
+    </div>
+    <div class="item" data-title="Ayağa Kalkma / Yatma">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Ayağa Kalkma / Yatma</div>
+        <div class="item-desc">Robota ayağa kalkması veya yatması ve pozisyonu kilitlemesi komutu</div>
+      </div>
+    </div>
+    <div class="item" data-title="Acil Durdurma (E-Stop)">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Acil Durdurma (E-Stop)</div>
+        <div class="item-desc">Motor gücü anında kesilir; tüm hareket durur. Yazılım üzerinden tek tuşla tetiklenebilir.</div>
+      </div>
+    </div>
+    <div class="item" data-title="Yük Modu">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Yük Modu</div>
+        <div class="item-desc">Üzerinde yük varken optimize edilmiş hareket modu etkinleştirilebilir</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       3. SENSÖR
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Sensör Verisi İzleme">
+    <div class="category-header">
+      <div class="num" style="background:#0f3460">3</div>
+      <h2>Sensör Verisi İzleme</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+    <div class="item" data-title="IMU Verisi (Hareket / Yön)">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">IMU Verisi (Hareket / Yön)</div>
+        <div class="item-desc">Dönüş (quaternion), açısal hız, ivme; nanosaniye zaman damgasıyla</div>
+      </div>
+    </div>
+    <div class="item" data-title="LiDAR Nokta Bulutu">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">LiDAR Nokta Bulutu</div>
+        <div class="item-desc">Ön ve arka LiDAR'dan 3D ham nokta bulutu + distorsiyon giderilmiş birleşik veri</div>
+      </div>
+    </div>
+    <div class="item" data-title="Lokalizasyon Durum İzleme">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Lokalizasyon Durum İzleme</div>
+        <div class="item-desc">Normal / Uyarı / Hata; alt detay: lazer kaybı, odometri kayması, harita hatası</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       4. KAMERA VE VİDEO İZLEME
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Kamera ve Canlı Video İzleme">
+    <div class="category-header">
+      <div class="num" style="background:#1565c0">4</div>
+      <h2>Kamera ve Canlı Video İzleme</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="subgroup-label">Canlı Yayın</div>
+    <div class="item" data-title="6 Kamera Eşzamanlı Canlı Stream">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">6 Kamera Eşzamanlı Canlı Stream</div>
+        <div class="item-desc">Ön, arka, sol, sağ, surround ve gimbal kameralar aynı anda izlenebilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Tekli / Çoklu Ekran Görünümü">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Tekli / Çoklu Ekran Görünümü</div>
+        <div class="item-desc">Operatör istediği kamerayı tam ekran veya 4'lü / 6'lı grid düzeninde izleyebilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="RTSP / Mevcut NVR Entegrasyonu">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">RTSP / Mevcut NVR Entegrasyonu</div>
+        <div class="item-desc">Standart RTSP protokolü; tesisteki mevcut kayıt sistemi veya video platformuna doğrudan bağlanır</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Kayıt ve Depolama</div>
+    <div class="item" data-title="Olay Tetiklemeli Kayıt">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Olay Tetiklemeli Kayıt</div>
+        <div class="item-desc">AI tespiti veya alarm geldiğinde otomatik kayıt başlar; olay öncesi/sonrası tampon dahil</div>
+      </div>
+    </div>
+    <div class="item" data-title="Anlık Görüntü (Snapshot) Alma">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Anlık Görüntü (Snapshot) Alma</div>
+        <div class="item-desc">İstenen anda belirli kameradan fotoğraf alınır; olay kaydına eklenir</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Görüntü Kalitesi Yönetimi</div>
+    <div class="item" data-title="Çözünürlük / Frame Rate / Bitrate Ayarı">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Çözünürlük / Frame Rate / Bitrate Ayarı</div>
+        <div class="item-desc">Bant genişliği optimizasyonu için programatik olarak kalite kontrolü (ham / yüksek / orta / düşük)</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Sabit Kamera Entegrasyonu</div>
+    <div class="item" data-title="Mevcut CCTV Kameraların Platforma Dahil Edilmesi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Mevcut CCTV Kameraların Platforma Dahil Edilmesi</div>
+        <div class="item-desc">Tesisteki RTSP destekli sabit kameralar robot kameralarıyla aynı platformda izlenir; marka bağımsız</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       5. AI TESPİTLERİ
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="AI Güvenlik Tespitleri">
+    <div class="category-header">
+      <div class="num" style="background:#6a1b9a">5</div>
+      <h2>AI Güvenlik Tespitleri <small style="font-weight:400;font-size:12px;color:#7a8a9a"> — BBA sunucusunda çalışır</small></h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="cat-note">
+      AI tespitler BBA'nın kendi sunucusunda çalışır; PUDU donanımı üzerine model yüklenemiyor.
+      <strong>Lokal AI modeli</strong> (internet gerektirmez) veya <strong>Gemini API</strong> (internet bağlantısı gerekli) olmak üzere iki seçenek sunulur.
+    </div>
+
+    <div class="subgroup-label">İş Güvenliği (KKE)</div>
+    <div class="item" data-title="Baret Eksikliği Tespiti">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Baret Eksikliği Tespiti</div>
+        <div class="item-desc">Zorunlu baret takılmayan personelin tespiti ve anlık alarm</div>
+      </div>
+    </div>
+    <div class="item" data-title="Yelek / Reflektif Kıyafet Eksikliği">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Yelek / Reflektif Kıyafet Eksikliği</div>
+        <div class="item-desc">Güvenlik yeleği taşımayan personelin tespiti</div>
+      </div>
+    </div>
+    <div class="item" data-title="Güvenlik Gözlüğü / Eldiven Eksikliği">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Güvenlik Gözlüğü / Eldiven Eksikliği <span class="tag tag-custom">Özel model</span></div>
+        <div class="item-desc">Belirli bölgelerde zorunlu tutulan kişisel koruyucu ekipman eksikliği tespiti</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Acil Durum Tespitleri</div>
+    <div class="item" data-title="Yangın ve Duman Tespiti">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Yangın ve Duman Tespiti</div>
+        <div class="item-desc">Görüntü tabanlı erken uyarı; duman rengi ve yoğunluk analizi ile tespit</div>
+      </div>
+    </div>
+    <div class="item" data-title="Yerde Yatan / Düşmüş Kişi Tespiti">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Yerde Yatan / Düşmüş Kişi Tespiti</div>
+        <div class="item-desc">İş kazası veya bayılma; anormal vücut pozisyonu tespiti ve anlık alarm</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Alan ve Erişim Kontrolü</div>
+    <div class="item" data-title="İzinsiz Alan İhlali Tespiti">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">İzinsiz Alan İhlali Tespiti</div>
+        <div class="item-desc">Harita üzerinde tanımlanan yasaklı veya kısıtlı bölgelere girişin tespiti</div>
+      </div>
+    </div>
+    <div class="item" data-title="Güvenlik Şeridi / Bariyer İhlali">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Güvenlik Şeridi / Bariyer İhlali</div>
+        <div class="item-desc">Sarı-siyah güvenlik şeridi veya fiziksel bariyer alanının geçilmesinin tespiti</div>
+      </div>
+    </div>
+    <div class="item" data-title="Gece Saatlerinde Yetkisiz Kişi Tespiti">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Gece Saatlerinde Yetkisiz Kişi Tespiti</div>
+        <div class="item-desc">Mesai dışı saatlerde tesis içinde kişi varlığının tespiti ve alarm</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Operasyonel Güvenlik</div>
+    <div class="item" data-title="Forklift / Araç Yakınlık Uyarısı">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Forklift / Araç — Yaya Yakınlık Uyarısı <span class="tag tag-custom">Özel model</span></div>
+        <div class="item-desc">Forklift veya araç ile yaya arasında tehlikeli mesafe oluştuğunda uyarı</div>
+      </div>
+    </div>
+    <div class="item" data-title="Kalabalık / Yoğunluk Analizi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Kalabalık / Yoğunluk Analizi</div>
+        <div class="item-desc">Belirli bir alandaki kişi sayısını sayar; eşik aşılınca alarm verir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Kapı / Geçit Durumu İzleme">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Kapı / Geçit Durumu İzleme</div>
+        <div class="item-desc">Güvenlik kapılarının açık kalıp kalmadığının tespiti; belirlenen süreyi aşan açıklıklara alarm</div>
+      </div>
+    </div>
+    <div class="item" data-title="Terk Edilmiş / Şüpheli Nesne Tespiti">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Terk Edilmiş / Şüpheli Nesne Tespiti</div>
+        <div class="item-desc">Yere bırakılmış ve belirlenen süreyi aşan nesnelerin tespiti</div>
+      </div>
+    </div>
+
+    <div class="subgroup-label">Özel Geliştirme</div>
+    <div class="item" data-title="Müşteriye Özel AI Modeli">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Müşteriye Özel AI Modeli <span class="tag tag-note">Ayrı kapsam</span></div>
+        <div class="item-desc">Yukarıda listede yer almayan, sahaya özgü tespit ihtiyaçları için model geliştirme. Kapsam ve süre ayrıca belirlenir.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       6. AI KURAL YÖNETİMİ
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="AI Kural ve Analiz Yönetimi">
+    <div class="category-header">
+      <div class="num" style="background:#6a1b9a">6</div>
+      <h2>AI Kural ve Analiz Yönetimi</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="item" data-title="Bölge Bazlı Kural Tanımlama">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Bölge Bazlı Kural Tanımlama</div>
+        <div class="item-desc">Harita üzerinde "Bu bölgede baret zorunlu", "Bu bölge gece izleme" gibi kurallara göre AI tespiti özelleştirme</div>
+      </div>
+    </div>
+    <div class="item" data-title="Zaman Dilimi Bazlı AI Etkinleştirme">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Zaman Dilimi Bazlı AI Etkinleştirme</div>
+        <div class="item-desc">Belirli tespitler sadece mesai saatlerinde veya gece vardiyasında aktif olacak şekilde zamanlanabilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Güven Eşiği (Confidence) Ayarı">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Güven Eşiği (Confidence) Ayarı</div>
+        <div class="item-desc">Yanlış alarm sayısını azaltmak için her tespit kategorisi için ayrı hassasiyet eşiği belirlenebilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Yanlış Alarm Yönetimi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Yanlış Alarm Yönetimi</div>
+        <div class="item-desc">Operatör "yanlış tespit" işaretleyebilir; bu kayıtlar tutulur ve tekrarlayan false positive'ler kural tabanlı olarak filtrelenir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Çoklu Robot / Kamera Koordinasyonu">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Çoklu Robot / Kamera Koordinasyonu</div>
+        <div class="item-desc">Birden fazla D5W ve/veya sabit kamera aynı AI altyapısına bağlanır; tüm tesisler tek merkezden izlenir</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       7. ALARM VE BİLDİRİM
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Alarm ve Bildirim Yönetimi">
+    <div class="category-header">
+      <div class="num" style="background:#c62828">7</div>
+      <h2>Alarm ve Bildirim Yönetimi</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="item" data-title="E-Posta Bildirimi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">E-Posta Bildirimi</div>
+        <div class="item-desc">Belirlenen tespit türlerinde sorumlu kişi veya gruba otomatik e-posta gönderilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Telegram Bildirimi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Telegram Bildirimi <span class="tag tag-note">Ayrı kapsam</span></div>
+        <div class="item-desc">Kritik alarmlarda Telegram bot üzerinden mesaj ve ekran görüntüsü gönderilir. Servis entegrasyonu ayrıca belirlenir.</div>
+      </div>
+    </div>
+    <div class="item" data-title="Alarm Onay / Kapatma Akışı">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Alarm Onay / Kapatma Akışı</div>
+        <div class="item-desc">Operatör alarmı "Görüldü", "İşleme Alındı" veya "Yanlış Tespit" şeklinde kapatır; işlem logu tutulur</div>
+      </div>
+    </div>
+    <div class="item" data-title="Alarm Önceliklendirme">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Alarm Önceliklendirme (Kritik / Orta / Düşük)</div>
+        <div class="item-desc">Her tespit kategorisine öncelik seviyesi atanır; kritik alarmlar ekranda öne çıkar</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       8. RAPORLAMA
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Raporlama ve Veri Yönetimi">
+    <div class="category-header">
+      <div class="num" style="background:#1b5e20">8</div>
+      <h2>Raporlama ve Veri Yönetimi</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="subgroup-label">Operasyonel Raporlar</div>
+    <div class="item" data-title="Otomatik Günlük / Haftalık / Aylık Rapor">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Otomatik Günlük / Haftalık / Aylık Rapor</div>
+        <div class="item-desc">Belirlenen periyotta tespit özeti, alarm sayıları ve robot aktivitesi otomatik e-posta ile iletilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Görev Geçmişi Raporu">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Görev Geçmişi Raporu</div>
+        <div class="item-desc">Robot hangi görevi ne zaman tamamladı, kaç noktayı ziyaret etti, kaç dakika çalıştı</div>
+      </div>
+    </div>
+    <div class="subgroup-label">AI Tespit Raporları</div>
+    <div class="item" data-title="Tespit Özeti ve İstatistik">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Tespit Özeti ve İstatistik</div>
+        <div class="item-desc">Kategori bazlı tespit sayısı, en sık ihlal edilen bölge, saatlik/günlük dağılım grafikleri</div>
+      </div>
+    </div>
+    <div class="item" data-title="Olay Detay Kaydı (Log)">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Olay Detay Kaydı (Log)</div>
+        <div class="item-desc">Her tespit için: zaman, kamera, bölge, güven skoru, ekran görüntüsü ve varsa video klibi</div>
+      </div>
+    </div>
+    <div class="subgroup-label">Dışa Aktarım</div>
+    <div class="item" data-title="PDF / Excel Rapor Dışa Aktarımı">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">PDF / Excel Rapor Dışa Aktarımı</div>
+        <div class="item-desc">Tüm raporlar PDF veya Excel formatında indirilebilir ve arşivlenebilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="API ile Dış Sisteme Veri Aktarımı">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">API ile Dış Sisteme Veri Aktarımı <span class="tag tag-note">Ayrı kapsam</span></div>
+        <div class="item-desc">Tespit ve alarm verileri REST API veya webhook ile ERP/WMS/SCADA sistemlerine iletilebilir</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       9. SİSTEM ALTYAPISI
+  ═══════════════════════════════════════════ -->
+  <div class="category" data-cat="Sistem Altyapısı">
+    <div class="category-header">
+      <div class="num" style="background:#4a5568">9</div>
+      <h2>Sistem Altyapısı</h2>
+      <span class="cat-sel-all" onclick="selectCategory(this)">Tümünü seç</span>
+    </div>
+
+    <div class="item" data-title="Tekil İzleme Platformu (BBA NEXUS)">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Tekil İzleme Platformu (BBA NEXUS)</div>
+        <div class="item-desc">Robot, sabit kamera ve AI verileri tek bir operatör ekranında birleştirilir</div>
+      </div>
+    </div>
+    <div class="item" data-title="Çok Kullanıcı / Rol Yönetimi">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Çok Kullanıcı / Rol Yönetimi</div>
+        <div class="item-desc">Operatör, süpervizör, yönetici gibi farklı yetki seviyeleri; her kullanıcı sadece kendi kapsamını görür</div>
+      </div>
+    </div>
+    <div class="item" data-title="Denetim İzi (Audit Log)">
+      <div class="toggle-wrap"><label class="toggle"><input type="checkbox" onchange="onToggle(this)"><span class="slider"></span></label></div>
+      <div class="item-body">
+        <div class="item-title">Denetim İzi (Audit Log)</div>
+        <div class="item-desc">Kim ne zaman hangi komutu verdi, hangi alarmı kapattı — tüm kullanıcı işlemleri kayıt altında</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       ÖZET
+  ═══════════════════════════════════════════ -->
+  <div class="summary-section" id="summary">
+    <div class="summary-header">
+      Seçilen Kapsam Özeti
+      <span class="s-count" id="summary-count">0 madde</span>
+    </div>
+    <div class="summary-body" id="summary-body">
+      <p class="summary-empty">Henüz hiçbir özellik seçilmedi. Yukarıdan ihtiyacınız olan maddeleri açın.</p>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  function onToggle(cb) {
+    cb.closest('.item').classList.toggle('selected', cb.checked);
+    updateSummary();
+  }
+  function selectAll() {
+    document.querySelectorAll('.item input[type=checkbox]').forEach(cb => {
+      cb.checked = true;
+      cb.closest('.item').classList.add('selected');
+    });
+    updateSummary();
+  }
+  function clearAll() {
+    document.querySelectorAll('.item input[type=checkbox]').forEach(cb => {
+      cb.checked = false;
+      cb.closest('.item').classList.remove('selected');
+    });
+    updateSummary();
+  }
+  function selectCategory(link) {
+    const cat = link.closest('.category');
+    const cbs = cat.querySelectorAll('input[type=checkbox]');
+    const allChecked = Array.from(cbs).every(cb => cb.checked);
+    cbs.forEach(cb => {
+      cb.checked = !allChecked;
+      cb.closest('.item').classList.toggle('selected', !allChecked);
+    });
+    link.textContent = allChecked ? 'Tümünü seç' : 'Tümünü kaldır';
+    updateSummary();
+  }
+  function updateSummary() {
+    const selected = document.querySelectorAll('.item.selected');
+    const count = selected.length;
+    document.getElementById('sel-count').textContent = count;
+    document.getElementById('summary-count').textContent = count + ' madde';
+    const body = document.getElementById('summary-body');
+    if (count === 0) {
+      body.innerHTML = '<p class="summary-empty">Henüz hiçbir özellik seçilmedi. Yukarıdan ihtiyacınız olan maddeleri açın.</p>';
+      return;
+    }
+    const groups = {};
+    selected.forEach(item => {
+      const catName = item.closest('.category').dataset.cat;
+      const title = item.dataset.title;
+      if (!groups[catName]) groups[catName] = [];
+      groups[catName].push(title);
+    });
+    let html = '';
+    for (const [cat, items] of Object.entries(groups)) {
+      html += `<div class="summary-cat"><div class="summary-cat-title">${cat}</div>`;
+      items.forEach(t => { html += `<div class="summary-item">${t}</div>`; });
+      html += '</div>';
+    }
+    body.innerHTML = html;
+  }
+</script>
+</body>
+</html>

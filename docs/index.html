@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pudu D5W — BBA Teknoloji</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f4f6f9; color: #1a1a2e; min-height: 100vh; }
+  .header {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 60%, #0f3460 100%);
+    color: white; padding: 48px 60px 40px;
+  }
+  .header h1 { font-size: 26px; font-weight: 700; }
+  .header p { font-size: 14px; color: #a0b4d0; margin-top: 8px; }
+  .header .meta { margin-top: 20px; font-size: 13px; color: #7a9cc0; }
+  .header .meta strong { color: #c8daf0; }
+  .container { max-width: 760px; margin: 48px auto; padding: 0 24px 80px; display: flex; flex-direction: column; gap: 16px; }
+  .card {
+    background: white; border-radius: 14px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+    padding: 28px 32px;
+    display: flex; align-items: center; gap: 24px;
+    text-decoration: none; color: inherit;
+    transition: box-shadow 0.15s, transform 0.15s;
+  }
+  .card:hover { box-shadow: 0 6px 24px rgba(0,0,0,0.12); transform: translateY(-2px); }
+  .card .icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 22px; flex-shrink: 0;
+  }
+  .card .body h2 { font-size: 16px; font-weight: 700; color: #1a1a2e; }
+  .card .body p { font-size: 13px; color: #718096; margin-top: 4px; line-height: 1.5; }
+  footer { text-align: center; font-size: 12px; color: #9aa3b5; margin-top: 40px; }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>Pudu D5W — Proje Dokümanları</h1>
+  <p>Zara Arvato — BBA Teknoloji Entegrasyon Projesi</p>
+  <div class="meta"><strong>Hazırlayan:</strong> BBA Teknoloji &nbsp;|&nbsp; <strong>Tarih:</strong> Mayıs 2026</div>
+</div>
+<div class="container">
+  <a class="card" href="BBA_D5W_Kapsam_Secim.html">
+    <div class="icon" style="background:#e8f0fe">📋</div>
+    <div class="body">
+      <h2>Kapsam Seçim Formu</h2>
+      <p>İstenen özellikleri toggle ile seçin; seçilenler otomatik olarak özetlenir ve yazdırılabilir.</p>
+    </div>
+  </a>
+  <a class="card" href="BBA_D5W_Mimari.html">
+    <div class="icon" style="background:#e8f5e9">🔌</div>
+    <div class="body">
+      <h2>Sistem Mimarisi</h2>
+      <p>Robot, BBA sunucusu ve operatör arasındaki bağlantı şeması; protokoller ve veri akışı.</p>
+    </div>
+  </a>
+  <a class="card" href="BBA_D5W_Kapsam.html">
+    <div class="icon" style="background:#f3e5f5">📦</div>
+    <div class="body">
+      <h2>Entegrasyon Kapsamı</h2>
+      <p>SDK v1.0 ile doğrulanmış tüm özellikler ve kapsam dışı maddeler.</p>
+    </div>
+  </a>
+  <a class="card" href="BBA_D5W_Soru_Cevap.html">
+    <div class="icon" style="background:#fff8e1">❓</div>
+    <div class="body">
+      <h2>Soru &amp; Cevap Referansı</h2>
+      <p>Sunum sırasında gelebilecek teknik sorulara hazırlık için iç referans doküman.</p>
+    </div>
+  </a>
+</div>
+<footer>BBA Teknoloji &nbsp;|&nbsp; Mayıs 2026</footer>
+</body>
+</html>
